@@ -33,7 +33,7 @@ public class ${className}Entity implements BaseEntity {
     <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
     private ${enumName} ${column.columnNameLower};
 <#else >
-	<#if column.javaType[0..8]=='java.lang'>
+	<#if column.javaType?starts_with('java.lang')>
         <#if column.columnNameLower?lower_case?index_of("id")!=-1>
     private String ${column.columnNameLower}s;
         <#else>
@@ -57,7 +57,7 @@ public class ${className}Entity implements BaseEntity {
     public void set${column.columnName} (${enumName} ${column.columnNameLower}) {
     	this.${column.columnNameLower} = ${column.columnNameLower};
     }
-<#elseif column.javaType?substring(0,9)=='java.lang'>
+<#elseif column.javaType?starts_with('java.lang')>
     public ${column.javaType?substring(10)} get${column.columnName}() {
     	return this.${column.columnNameLower};
     }

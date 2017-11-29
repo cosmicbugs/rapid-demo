@@ -1,6 +1,12 @@
 <#assign className = table.className>
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
+<#assign hasStatusColumn = false>
+<#list table.columns as column>
+<#if column.columnNameLower?lower_case?index_of("status")!=-1>
+<#assign hasStatusColumn = true>
+</#if>
+</#list>
 package ${basepackage}.service;
 
 import java.util.List;
@@ -41,6 +47,7 @@ public interface ${className}Service {
      */
     void deleteByIds(List<Integer> ids);
 
+<#if hasStatusColumn>
     /**
      * 根据id标记删除信息
      */
@@ -51,6 +58,7 @@ public interface ${className}Service {
      */
     void flagDeleteBatchByIds(List<Integer> ids);
 
+</#if>
     /**
      * 分页查询
      */

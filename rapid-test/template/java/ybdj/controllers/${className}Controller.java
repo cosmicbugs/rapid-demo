@@ -4,6 +4,12 @@
 <#assign classNameFirstLower = table.classNameFirstLower>
 <#assign classNameLower = className?uncap_first>
 <#assign service = table.classNameFirstLower+"Service">
+<#assign hasStatusColumn = false>
+<#list table.columns as column>
+    <#if column.columnNameLower?lower_case?index_of("status")!=-1>
+        <#assign hasStatusColumn = true>
+    </#if>
+</#list>
 package ${basepackage}.controllers;
 
 import com.sqbj.ybdj.api.utils.ListHelper;
@@ -122,7 +128,7 @@ public class ${className}Controller extends AbstractBaseController{
         return new DataResponse<>("success");
     }
 
-
+<#if hasStatusColumn>
     /**
      * 根据id标记删除信息
      *
@@ -154,7 +160,7 @@ public class ${className}Controller extends AbstractBaseController{
         return new DataResponse<>("success");
     }
 
-
+</#if>
     /**
      * 分页查询
      */
@@ -171,7 +177,7 @@ public class ${className}Controller extends AbstractBaseController{
                                                         <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
                                                             @RequestParam(required = false)  ${enumName} ${column.columnNameLower},
                                                         <#else>
-                                                            <#if column.javaType[0..8]=='java.lang'>
+                                                            <#if column.javaType?starts_with('java.lang')>
                                                                 <#if column.columnNameLower?lower_case?index_of("id")!=-1>
                                                             @RequestParam(required = false)  String ${column.columnNameLower}s,
                                                                 <#else>

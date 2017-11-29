@@ -33,7 +33,7 @@ public class ${className}Entity implements BaseEntity {
     @RequestApiFieldUpdatable
     private ${enumName} ${column.columnNameLower};
 <#else >
-	<#if column.javaType[0..8]=='java.lang'>
+	<#if column.javaType?starts_with('java.lang')>
     @RequestApiFieldUpdatable
     private ${column.javaType?substring(10)} ${column.columnNameLower};
 	<#else>
@@ -55,7 +55,7 @@ public class ${className}Entity implements BaseEntity {
     public void set${column.columnName} (${enumName} ${column.columnNameLower}) {
     	this.${column.columnNameLower} = ${column.columnNameLower};
     }
-<#elseif column.javaType?substring(0,9)=='java.lang'>
+<#elseif column.javaType?starts_with('java.lang')>
     public ${column.javaType?substring(10)} get${column.columnName}() {
     	return this.${column.columnNameLower};
     }

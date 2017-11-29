@@ -14,7 +14,7 @@ public class CodeGenerator {
         // 删除生成器的输出目录//
         g.deleteOutRootDir();
         // 通过数据库表生成文件
-        g.generateByTable("course_info");
+        g.generateByAllTable();
 
         // 自动搜索数据库中的所有表并生成文件,template为模板的根目录
         // g.generateByAllTable();

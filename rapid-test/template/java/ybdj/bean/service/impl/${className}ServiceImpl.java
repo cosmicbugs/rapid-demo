@@ -3,6 +3,12 @@
 <#assign idColumn = table.idColumn>
 <#assign dao = classNameFirstLower+"Dao">
 <#assign classNameLower = className?uncap_first>
+<#assign hasStatusColumn = false>
+<#list table.columns as column>
+<#if column.columnNameLower?lower_case?index_of("status")!=-1>
+<#assign hasStatusColumn = true>
+</#if>
+</#list>
 package ${basepackage}.service.impl;
 
 import com.sqbj.ybdj.dependency.web.api.core.service.AbstractBaseServiceImpl;
@@ -81,6 +87,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
         ${dao}.deleteByIdIn(ids);
     }
 
+<#if hasStatusColumn>
     /**
      * 根据id标记删除信息
      */
@@ -96,6 +103,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
     public void flagDeleteBatchByIds(List<Integer> ids) {
         ${dao}.updateStatusByIds(id, NormalStatusNew.Deleted.name());
     }
+</#if>
 
     /**
      * 分页查询
@@ -121,7 +129,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
                 predicates.add(criteriaBuilder.equal(root.get("${column.columnNameLower}").as(${enumName}.class), request.get${enumName}()));
             }
     <#else >
-        <#if column.javaType[0..8]=='java.lang'>
+        <#if column.javaType?starts_with('java.lang')>
             <#if column.columnNameLower?lower_case?index_of("id")!=-1>
             if (request.get${column.columnName}s() != null && !request.get${column.columnName}s().isEmpty()) {
                 if (request.get${column.columnName}s().size() == 1) {

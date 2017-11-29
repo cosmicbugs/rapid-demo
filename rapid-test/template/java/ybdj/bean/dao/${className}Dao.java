@@ -2,6 +2,12 @@
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
 <#assign underscoreName = table.underscoreName>
+<#assign hasStatusColumn = false>
+<#list table.columns as column>
+<#if column.columnNameLower?lower_case?index_of("status")!=-1>
+<#assign hasStatusColumn = true>
+</#if>
+</#list>
 package ${basepackage}.dao;
 
 import com.sqbj.ybdj.dependency.web.api.core.dao.BaseDao;
@@ -27,7 +33,7 @@ public interface ${className}Dao extends BaseDao<${className}Entity, Integer> {
      * 根据ids删除对象
      */
     void deleteByIdIn(List<Integer> ids);
-
+<#if hasStatusColumn>
     /**
      * 更新状态
      *
@@ -47,4 +53,6 @@ public interface ${className}Dao extends BaseDao<${className}Entity, Integer> {
     @Modifying
     @Query(value = "update ${underscoreName} set status= ?2 where id in ?1", nativeQuery = true)
     void updateStatusByIds(List<Integer> ids, String status);
+</#if>
+
 }
