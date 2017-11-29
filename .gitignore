@@ -107,4 +107,4 @@ Icon
 generator.xml
 
 rapid/catalina.home_IS_UNDEFINED/logs
-rapid-test/
+rapid-test/outdir
