@@ -2,7 +2,7 @@
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
 <#assign hasDataColumn = false>
-package ${basepackage}.web.entity;
+package ${basepackage}.entity;
 
 <#include "/include/ybdj_include/entity_imports.include">
 <#include "/include/ybdj_include/enum_imports.include">

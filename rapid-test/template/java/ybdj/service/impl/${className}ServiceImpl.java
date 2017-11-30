@@ -11,13 +11,29 @@
 </#list>
 package ${basepackage}.service.impl;
 
-import com.sqbj.ybdj.dependency.web.api.core.service.AbstractBaseServiceImpl;
+import ${project_package_prefix}.dependency.web.api.core.service.AbstractBaseServiceImpl;
+import ${project_package_prefix}.dependency.web.api.core.utils.AssertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.criteria.Predicate;
+
+import ${basepackage}.dao.${className}Dao;
+import ${basepackage}.entity.${className}Entity;
+import ${basepackage}.service.${className}Service;
+import ${basepackage}.bean.request.${className}AddRequest;
+import ${basepackage}.bean.request.${className}ModifyRequest;
+import ${basepackage}.bean.request.${className}PageRequest;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 <#include "/include/ybdj_include/enum_imports.include">
+
 /**
 <#include "/include/common/java_description.include">
  */
@@ -37,7 +53,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
         ${className}Entity entity = new ${className}Entity();
         copyUpdatableField(entity, request);
         ${dao}.save(entity);
-        rerturn entity;
+        return entity;
     }
 
     /**
@@ -49,7 +65,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
         AssertUtil.notNull(entity, "Error", "对象不存在");
         copyUpdatableField(entity, request);
         ${dao}.save(entity);
-        rerturn entity;
+        return entity;
     }
 
     /**
@@ -101,7 +117,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public void flagDeleteBatchByIds(List<Integer> ids) {
-        ${dao}.updateStatusByIds(id, NormalStatusNew.Deleted.name());
+        ${dao}.updateStatusByIds(ids, NormalStatusNew.Deleted.name());
     }
 </#if>
 
@@ -109,8 +125,8 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      * 分页查询
      */
     @Override
-    Page<${className}Entity> pageList(${className}PageRequest request, Pageable pageable){
-        return courseInfoDao.findAll((root, criteriaQuery, criteriaBuilder) -> {
+    public Page<${className}Entity> pageList(${className}PageRequest request, Pageable pageable){
+        return ${dao}.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
     <#list table.columns as column>
     <#if column.columnNameLower == idColumn>
@@ -125,8 +141,8 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
 
     <#elseif column.remarks?? && (column.remarks?index_of("Enum")!=-1)>
     <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
-            if (request.get${enumName}() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("${column.columnNameLower}").as(${enumName}.class), request.get${enumName}()));
+            if (request.get${column.columnName}() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("${column.columnNameLower}").as(${enumName}.class), request.get${column.columnName}()));
             }
     <#else >
         <#if column.javaType?starts_with('java.lang')>

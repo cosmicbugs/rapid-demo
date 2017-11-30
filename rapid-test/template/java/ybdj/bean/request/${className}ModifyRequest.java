@@ -2,16 +2,17 @@
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
 <#assign hasDataColumn = false>
-package ${basepackage}.web.entity;
+package ${basepackage}.bean.request;
 
 import java.util.Date;
-import com.sqbj.ybdj.api.core.annotation.RequestApiFieldUpdatable;
+import ${project_package_prefix}.api.core.annotation.RequestApiFieldUpdatable;
+import ${project_package_prefix}.dependency.web.api.core.bean.request.BaseApiBean;
 <#include "/include/ybdj_include/enum_imports.include">
 
 /**
 <#include "/include/common/java_description.include">
  */
-public class ${className}Entity implements BaseEntity {
+public class ${className}ModifyRequest implements BaseApiBean {
 
 
 <#list table.columns as column>
@@ -20,19 +21,23 @@ public class ${className}Entity implements BaseEntity {
      * ${column.remarks}
      */
 </#if>
-    @RequestApiFieldUpdatable
 <#if column.columnNameLower == idColumn>
     private Integer ${idColumn};
 <#elseif column.isDateTimeColumn>
+    <#if  (column.columnNameLowerCase?index_of('create')==-1) && (column.columnNameLowerCase?index_of('update')==-1) && (column.columnNameLowerCase?index_of('modify')==-1)>
+    @RequestApiFieldUpdatable
     private Date ${column.columnNameLower};
 	<#assign hasDataColumn = true>
+    </#if>
 <#elseif column.remarks?? && (column.remarks?index_of("Enum")!=-1)>
     <#--Java类中使用到了枚举类型.制定模板时,需要在数据库字段备注中添加信息: Enum:{EnumName}.XXX 如: Enum:YesNoNew.是否可用 -->
     <#--枚举的import需要加入到.include文件中或生成Java文件后自行引入 -->
     <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
+    @RequestApiFieldUpdatable
     private ${enumName} ${column.columnNameLower};
 <#else >
-	<#if column.javaType?starts_with('java.lang')>
+    @RequestApiFieldUpdatable
+    <#if column.javaType?starts_with('java.lang')>
     private ${column.javaType?substring(10)} ${column.columnNameLower};
 	<#else>
     private ${column.javaType} ${column.columnNameLower};
@@ -61,6 +66,7 @@ public class ${className}Entity implements BaseEntity {
     	this.${column.columnNameLower} = ${column.columnNameLower};
     }
 <#elseif column.isDateTimeColumn>
+    <#if  (column.columnNameLowerCase?index_of('create')==-1) && (column.columnNameLowerCase?index_of('update')==-1) && (column.columnNameLowerCase?index_of('modify')==-1)>
     public Date get${column.columnName}() {
     	return this.${column.columnNameLower};
     }
@@ -68,6 +74,7 @@ public class ${className}Entity implements BaseEntity {
     public void set${column.columnName} (Date ${column.columnNameLower}) {
     	this.${column.columnNameLower} = ${column.columnNameLower};
     }
+    </#if>
 <#else>
     public ${column.javaType} get${column.columnName}() {
     	return this.${column.columnNameLower};

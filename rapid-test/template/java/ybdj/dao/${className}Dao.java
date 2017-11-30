@@ -10,9 +10,13 @@
 </#list>
 package ${basepackage}.dao;
 
-import com.sqbj.ybdj.dependency.web.api.core.dao.BaseDao;
+import ${project_package_prefix}.dependency.web.api.core.dao.BaseDao;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import ${basepackage}.entity.${className}Entity;
+
+import java.util.List;
 
 /**
 <#include "/include/common/java_description.include">

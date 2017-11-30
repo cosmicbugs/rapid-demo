@@ -1,5 +1,5 @@
 
-import com.sqbj.ybdj.dependency.web.api.core.entity.BaseEntity;
+import ${project_package_prefix}.dependency.web.api.core.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;

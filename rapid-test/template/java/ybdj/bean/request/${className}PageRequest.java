@@ -2,16 +2,17 @@
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
 <#assign hasDataColumn = false>
-package ${basepackage}.web.entity;
+package ${basepackage}.bean.request;
 
 import java.util.Date;
-import com.sqbj.ybdj.api.core.annotation.RequestApiFieldUpdatable;
+import ${project_package_prefix}.api.core.annotation.RequestApiFieldUpdatable;
+import ${project_package_prefix}.dependency.web.api.core.bean.request.BaseApiBean;
 <#include "/include/ybdj_include/enum_imports.include">
 
 /**
 <#include "/include/common/java_description.include">
  */
-public class ${className}Entity implements BaseEntity {
+public class ${className}PageRequest implements BaseApiBean {
 
 
 <#list table.columns as column>
@@ -48,7 +49,8 @@ public class ${className}Entity implements BaseEntity {
 
 
 <#list table.columns as column>
-<#if column.remarks?? && (column.remarks?index_of("Enum")!=-1)>
+<#if column.columnNameLower == idColumn>
+<#elseif column.remarks?? && (column.remarks?index_of("Enum")!=-1)>
 <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
     public ${enumName} get${column.columnName}() {
     	return this.${column.columnNameLower};

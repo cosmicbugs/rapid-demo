@@ -12,6 +12,11 @@ package ${basepackage}.service;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import ${basepackage}.entity.${className}Entity;
+import ${basepackage}.bean.request.${className}AddRequest;
+import ${basepackage}.bean.request.${className}ModifyRequest;
+import ${basepackage}.bean.request.${className}PageRequest;
 /**
 <#include "/include/common/java_description.include">
  */

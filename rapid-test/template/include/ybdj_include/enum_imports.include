@@ -1,7 +1,7 @@
 
-import com.sqbj.ybdj.api.core.enums.YesNoNew;
-import com.sqbj.ybdj.api.core.enums.NormalStatusNew;
-import com.sqbj.ybdj.api.core.enums.EnableNew;
+import ${project_package_prefix}.api.core.enums.YesNoNew;
+import ${project_package_prefix}.api.core.enums.NormalStatusNew;
+import ${project_package_prefix}.api.core.enums.EnableNew;
 
-import com.sqbj.ybdj.api.enums.course.CycleType;
-import com.sqbj.ybdj.api.enums.course.UseRange;
+import ${project_package_prefix}.api.enums.course.CycleType;
+import ${project_package_prefix}.api.enums.course.UseRange;

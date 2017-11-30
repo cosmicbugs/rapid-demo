@@ -2,7 +2,7 @@
 <#assign idColumn = table.idColumn>
 <#assign classNameLower = className?uncap_first>
 <#assign hasDataColumn = false>
-package ${basepackage}.web.entity;
+package ${basepackage}.bean.response;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -21,7 +21,7 @@ public class ${className}Response {
      */
 </#if>
 <#if column.columnNameLower == idColumn>
-    	private Integer ${idColumn};
+    private Integer ${idColumn};
 <#elseif column.isDateTimeColumn>
     <#if column.jdbcSqlTypeName=='DATE'>
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")

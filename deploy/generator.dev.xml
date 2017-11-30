@@ -7,7 +7,8 @@
     <!--2.可以引用环境变量: ${env.JAVA_HOME} or System.properties: ${user.home},property之间也可以相互引用-->
     <!--</comment>-->
 
-    <entry key="basepackage">com.sqbj.ybdj.api</entry>
+    <entry key="basepackage">文件生成时包路径前缀</entry>
+    <entry key="project_package_prefix">文件生成时引入项目其他类路径前缀</entry>
 
     <!-- jsp namespace: web/${namespace}/${className}/list.jsp -->
     <entry key="namespace">pages</entry>

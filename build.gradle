@@ -16,7 +16,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 
-    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
+//    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
+    // https://mvnrepository.com/artifact/org.freemarker/freemarker
+    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.27-incubating'
+
     compile group: 'com.googlecode.rapid-framework', name: 'rapid-generator', version: '4.0.6'
     compile group: 'com.googlecode.rapid-framework', name: 'rapid-generator-template', version: '4.0.6'
     compile group: 'com.googlecode.rapid-framework', name: 'rapid-generator-ext', version: '4.0.6'

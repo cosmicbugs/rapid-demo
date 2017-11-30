@@ -12,23 +12,35 @@
 </#list>
 package ${basepackage}.controllers;
 
-import com.sqbj.ybdj.api.utils.ListHelper;
-import org.springframework.web.bind.annotation.*;
-import com.sqbj.ybdj.api.core.annotation.SessionRequired;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.sqbj.ybdj.api.core.annotation.SessionRequired;
-import com.sqbj.ybdj.dependency.web.api.core.controllers.AbstractBaseController;
-import com.sqbj.ybdj.dependency.web.api.core.utils.AssertUtil;
-import com.sqbj.ybdj.dependency.web.api.core.utils.BeanMapping;
-import com.sqbj.ybdj.dependency.web.api.core.bean.response.DataResponse;
-import com.sqbj.ybdj.dependency.web.api.core.bean.response.PageResponse;
 
-import com.sqbj.ybdj.api.utils.DateNewUtil;
+import ${project_package_prefix}.api.utils.ListHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import ${project_package_prefix}.api.core.annotation.SessionRequired;
+import org.springframework.beans.factory.annotation.Autowired;
+import ${project_package_prefix}.dependency.web.api.core.controllers.AbstractBaseController;
+import ${project_package_prefix}.dependency.web.api.core.utils.AssertUtil;
+import ${project_package_prefix}.dependency.web.api.core.utils.BeanMapping;
+import ${project_package_prefix}.dependency.web.api.core.bean.response.DataResponse;
+import ${project_package_prefix}.dependency.web.api.core.bean.response.PageResponse;
+
+import ${project_package_prefix}.api.utils.DateNewUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import ${basepackage}.entity.${className}Entity;
+import ${basepackage}.bean.request.${className}AddRequest;
+import ${basepackage}.bean.request.${className}ModifyRequest;
+import ${basepackage}.bean.request.${className}PageRequest;
+import ${basepackage}.bean.response.${className}Response;
+import ${basepackage}.service.${className}Service;
 
 import java.util.List;
+import java.util.ArrayList;
+<#include "/include/ybdj_include/enum_imports.include">
+
 /**
 <#include "/include/common/java_description.include">
  */
@@ -45,7 +57,15 @@ public class ${className}Controller extends AbstractBaseController{
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @SessionRequired
     public DataResponse<${className}Response> add(@RequestBody ${className}AddRequest request) {
-
+<#list table.columns as column>
+<#if column.remarks?? && (column.remarks?index_of("Enum")!=-1) >
+        AssertUtil.notNull(request.get${column.columnName}(), "Error", "${column.columnNameLower}不能为空");
+<#elseif column.isStringColumn>
+        if (StringUtils.isNoneBlank(request.get${column.columnName}())) {
+            AssertUtil.assertFalse(request.get${column.columnName}().length() > ${column.size}, "Error", "${column.columnNameLower}长度超过${column.size}字符");
+        }
+</#if>
+</#list>
         ${className}Entity entity = ${service}.add(request);
         ${className}Response response = BeanMapping.map(entity, ${className}Response.class);
         return new DataResponse<>(response);
@@ -56,9 +76,17 @@ public class ${className}Controller extends AbstractBaseController{
      */
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
     @SessionRequired
-    public DataResponse<${className}Response> add(@RequestBody ${className}ModifyRequest request) {
+    public DataResponse<${className}Response> modify(@RequestBody ${className}ModifyRequest request) {
         AssertUtil.notNull(request.getId(), "Error", "id为空");
-
+<#list table.columns as column>
+<#if column.remarks?? && (column.remarks?index_of("Enum")!=-1) >
+        AssertUtil.notNull(request.get${column.columnName}(), "Error", "${column.columnNameLower}不能为空");
+<#elseif column.isStringColumn>
+        if (StringUtils.isNoneBlank(request.get${column.columnName}())) {
+            AssertUtil.assertFalse(request.get${column.columnName}().length() > ${column.size}, "Error", "${column.columnNameLower}长度超过${column.size}字符");
+        }
+</#if>
+</#list>
         ${className}Entity entity = ${service}.modify(request);
         ${className}Response response = BeanMapping.map(entity, ${className}Response.class);
         return new DataResponse<>(response);
@@ -71,7 +99,7 @@ public class ${className}Controller extends AbstractBaseController{
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @SessionRequired
-    public DataResponse<${className}Response> findOne(@PathVariable Long id) {
+    public DataResponse<${className}Response> findOne(@PathVariable Integer id) {
         AssertUtil.notNull(id, "Error", "id为空");
         ${className}Entity entity = ${service}.findOneById(id);
         ${className}Response response = BeanMapping.map(entity, ${className}Response.class);
@@ -104,7 +132,7 @@ public class ${className}Controller extends AbstractBaseController{
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @SessionRequired
-    public DataResponse<Object> delete(@PathVariable Long id) {
+    public DataResponse<Object> delete(@PathVariable Integer id) {
         AssertUtil.notNull(id, "Error", "id为空");
 
         ${service}.deleteOneById(id);
@@ -124,7 +152,7 @@ public class ${className}Controller extends AbstractBaseController{
         AssertUtil.notNull(idsList, "Error", "ids为空");
         AssertUtil.assertFalse(idsList.isEmpty(), "Error", "ids为空");
 
-        ${service}.deleteByIds(ids);
+        ${service}.deleteByIds(idsList);
         return new DataResponse<>("success");
     }
 
@@ -136,7 +164,7 @@ public class ${className}Controller extends AbstractBaseController{
      */
     @RequestMapping(value = "/flag/{id}", method = RequestMethod.DELETE)
     @SessionRequired
-    public DataResponse<Object> flagDelete(@PathVariable Long id) {
+    public DataResponse<Object> flagDelete(@PathVariable Integer id) {
         AssertUtil.notNull(id, "Error", "id为空");
 
         ${service}.flagDeleteOneById(id);
@@ -156,7 +184,7 @@ public class ${className}Controller extends AbstractBaseController{
         AssertUtil.notNull(idsList, "Error", "ids为空");
         AssertUtil.assertFalse(idsList.isEmpty(), "Error", "ids为空");
 
-        ${service}.flagDeleteBatchByIds(ids);
+        ${service}.flagDeleteBatchByIds(idsList);
         return new DataResponse<>("success");
     }
 
@@ -167,28 +195,28 @@ public class ${className}Controller extends AbstractBaseController{
     @RequestMapping(value = "/pageList", method = RequestMethod.GET)
     @SessionRequired
     public PageResponse<${className}Response> pageList(@RequestParam(required = false, defaultValue = "0") Integer pageIndex,
-                                                            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                       @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                     <#list table.columns as column>
                                                         <#if column.columnNameLower == idColumn>
                                                         <#elseif column.isDateTimeColumn>
-                                                            @RequestParam(required = false)  String ${column.columnNameLower}Start,
-                                                            @RequestParam(required = false)  String ${column.columnNameLower}End,
+                                                       @RequestParam(required = false)  String ${column.columnNameLower}Start,
+                                                       @RequestParam(required = false)  String ${column.columnNameLower}End,
                                                         <#elseif column.remarks?? && (column.remarks?index_of("Enum")!=-1)>
                                                         <#assign enumName= (column.remarks?substring(column.remarks?index_of("Enum:")+5,column.remarks?index_of(".")))/>
-                                                            @RequestParam(required = false)  ${enumName} ${column.columnNameLower},
+                                                       @RequestParam(required = false)  ${enumName} ${column.columnNameLower},
                                                         <#else>
                                                             <#if column.javaType?starts_with('java.lang')>
                                                                 <#if column.columnNameLower?lower_case?index_of("id")!=-1>
-                                                            @RequestParam(required = false)  String ${column.columnNameLower}s,
+                                                       @RequestParam(required = false)  String ${column.columnNameLower}s,
                                                                 <#else>
-                                                            @RequestParam(required = false)  ${column.javaType?substring(10)} ${column.columnNameLower},
+                                                       @RequestParam(required = false)  ${column.javaType?substring(10)} ${column.columnNameLower},
                                                                 </#if>
                                                             <#else>
-                                                            @RequestParam(required = false)  ${column.javaType} ${column.columnNameLower},
+                                                       @RequestParam(required = false)  ${column.javaType} ${column.columnNameLower},
                                                             </#if>
                                                         </#if>
                                                         </#list>
-                                                            @RequestParam(required = false)  String orderBys) {
+                                                       @RequestParam(required = false)  String orderBys) {
 
         ${className}PageRequest request = new ${className}PageRequest();
 <#list table.columns as column>
@@ -210,9 +238,9 @@ public class ${className}Controller extends AbstractBaseController{
         </#if>
     </#if>
 </#list>
-        List<Sort.Order> orders = new ArrayList<>();
+        List<Sort.Order> sortOrders = new ArrayList<>();
 
-        Pageable pageable = new PageRequest(pageIndex, pageSize, new Sort(orders));
+        Pageable pageable = new PageRequest(pageIndex, pageSize, new Sort(sortOrders));
 
         Page<${className}Entity> pageList = ${service}.pageList(request, pageable);
 
