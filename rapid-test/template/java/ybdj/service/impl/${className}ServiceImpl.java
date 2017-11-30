@@ -63,6 +63,7 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
     public ${className}Entity modify(${className}ModifyRequest request) {
         ${className}Entity entity = this.findOneById(request.getId());
         AssertUtil.notNull(entity, "Error", "对象不存在");
+
         copyUpdatableField(entity, request);
         ${dao}.save(entity);
         return entity;
@@ -84,7 +85,14 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public List<${className}Entity> findListByIds(List<Integer> ids) {
-        return ${dao}.findByIdIn(ids);
+        AssertUtil.notNull(ids, "Error", "ids为空");
+        AssertUtil.assertFalse(ids.isEmpty(), "Error", "ids为空");
+
+        List<SysMenuEntity> list = ${dao}.findByIdIn(ids);
+        AssertUtil.notNull(list, "Error", "ids数据不存在");
+        AssertUtil.assertFalse(list.isEmpty(), "Error", "ids数据不存在");
+
+        return list;
     }
 
     /**
@@ -92,6 +100,8 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public void deleteOneById(Integer id) {
+        //查询资源是否存在
+        this.findOneById(id);
         ${dao}.deleteById(id);
     }
 
@@ -100,6 +110,16 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public void deleteByIds(List<Integer> ids) {
+
+        AssertUtil.notNull(ids, "Error", "ids为空");
+        AssertUtil.assertFalse(ids.isEmpty(), "Error", "ids为空");
+
+        List<SysMenuEntity> list = ${dao}.findByIdIn(ids);
+        AssertUtil.notNull(list, "Error", "ids数据不存在");
+        AssertUtil.assertFalse(list.isEmpty(), "Error", "ids数据不存在");
+
+        AssertUtil.assertTrue(ids.size() == list.size(), "Error", "ids有数据不存在");
+
         ${dao}.deleteByIdIn(ids);
     }
 
@@ -109,7 +129,10 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public void flagDeleteOneById(Integer id) {
-        ${dao}.updateStatusById(id, NormalStatusNew.Deleted.name());
+        //查询资源是否存在
+        SysMenuEntity entity = this.findOneById(id);
+        entity.setStatus(NormalStatusNew.Deleted);
+        ${dao}.save(entity);
     }
 
     /**
@@ -117,7 +140,19 @@ public class ${className}ServiceImpl extends AbstractBaseServiceImpl implements 
      */
     @Override
     public void flagDeleteBatchByIds(List<Integer> ids) {
-        ${dao}.updateStatusByIds(ids, NormalStatusNew.Deleted.name());
+        AssertUtil.notNull(ids, "Error", "ids为空");
+        AssertUtil.assertFalse(ids.isEmpty(), "Error", "ids为空");
+
+        List<SysMenuEntity> list = ${dao}.findByIdInAndStatus(ids, NormalStatusNew.Normal);
+        AssertUtil.notNull(list, "Error", "ids数据不存在");
+        AssertUtil.assertFalse(list.isEmpty(), "Error", "ids数据不存在");
+
+        AssertUtil.assertTrue(ids.size() == list.size(), "Error", "ids有数据不存在");
+
+        list.forEach(entity -> {
+            entity.setStatus(NormalStatusNew.Deleted);
+        });
+        ${dao}.save(list);
     }
 </#if>
 

@@ -25,6 +25,7 @@ import ${project_package_prefix}.dependency.web.api.core.bean.response.DataRespo
 import ${project_package_prefix}.dependency.web.api.core.bean.response.PageResponse;
 
 import ${project_package_prefix}.api.utils.DateNewUtil;
+import ${project_package_prefix}.api.utils.ResourceUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,7 @@ import ${basepackage}.bean.request.${className}ModifyRequest;
 import ${basepackage}.bean.request.${className}PageRequest;
 import ${basepackage}.bean.response.${className}Response;
 import ${basepackage}.service.${className}Service;
+import ${basepackage}.enums.SysMenuOrder;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ public class ${className}Controller extends AbstractBaseController{
     /**
      * 更新
      */
-    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     @SessionRequired
     public DataResponse<${className}Response> modify(@RequestBody ${className}ModifyRequest request) {
         AssertUtil.notNull(request.getId(), "Error", "id为空");
@@ -239,6 +241,14 @@ public class ${className}Controller extends AbstractBaseController{
     </#if>
 </#list>
         List<Sort.Order> sortOrders = new ArrayList<>();
+        if (orderBys == null || orderBys.isEmpty()) {
+            sortOrders.add(new Sort.Order(Sort.Direction.DESC, "id"));
+        } else {
+            List<Sort.Order> sorts = ResourceUtils.sortsByEntityColumn(${className}Order.values(), orderBys);
+            if (sorts != null) {
+                sortOrders = sorts;
+            }
+        }
 
         Pageable pageable = new PageRequest(pageIndex, pageSize, new Sort(sortOrders));
 

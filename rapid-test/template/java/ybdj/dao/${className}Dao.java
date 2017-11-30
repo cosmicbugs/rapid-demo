@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.Query;
 import ${basepackage}.entity.${className}Entity;
 
 import java.util.List;
+<#include "/include/ybdj_include/enum_imports.include">
 
 /**
 <#include "/include/common/java_description.include">
@@ -24,39 +25,33 @@ import java.util.List;
 public interface ${className}Dao extends BaseDao<${className}Entity, Integer> {
 
     /**
-     * 根据ids查询信息
+     * 根据ids批量查询对象
+     * @param ids
+     * @return
      */
     List<${className}Entity> findByIdIn(List<Integer> ids);
 
     /**
-     * 根据id删除对象
+     * 根据id物理删除数据
+     * @param id
      */
     void deleteById(Integer id);
 
     /**
-     * 根据ids删除对象
+     * 根据ids物理删除数据
+     * @param ids
      */
     void deleteByIdIn(List<Integer> ids);
 <#if hasStatusColumn>
-    /**
-     * 更新状态
-     *
-     * @param id
-     * @param status
-     */
-    @Modifying
-    @Query(value = "update ${underscoreName} set status= ?2 where id = ?1", nativeQuery = true)
-    void updateStatusById(Integer id, String status);
 
     /**
-     * 更新状态
-     *
+     * 根据ids、状态批量查询对象
      * @param ids
-     * @param status
+     * @param statusNew
+     * @return
      */
-    @Modifying
-    @Query(value = "update ${underscoreName} set status= ?2 where id in ?1", nativeQuery = true)
-    void updateStatusByIds(List<Integer> ids, String status);
+    List<SysMenuEntity> findByIdInAndStatus(List<Integer> ids, NormalStatusNew statusNew);
+
 </#if>
 
 }
